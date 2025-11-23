@@ -8,6 +8,11 @@ const int THRESHOLD = 50;
 const int SCAN_TIME = 5;
 const int MASK_TIME = 50;
 
+// Potentiometer pins
+const int POT_PIN_1 = A13;
+const int POT_PIN_2 = A11;
+const int POT_PIN_3 = A12;
+
 // Tact switch pins
 const int BUTTON_PINS[] = {2, 3, 4, 5, 9};
 const int NUM_BUTTONS = 5;
@@ -25,14 +30,23 @@ bool scanning2 = false;
 unsigned long scanStartTime2 = 0;
 int peakValue2 = 0;
 
+// Pot values
+int pot1Value = 0;
+int pot2Value = 0;
+int pot3Value = 0;
+unsigned long lastPotRead = 0;
+const int POT_READ_INTERVAL = 100; // Read pots every 100ms
+
 // OLED display - using I2C bus 1 (pins 16 & 17)
-// Adjust the constructor if your display uses a different chip (SSD1306, SH1106, etc.)
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 16, /* data=*/ 17);
 
 void setup() {
   Serial.begin(115200);
   pinMode(DRUM_PIN_1, INPUT);
   pinMode(DRUM_PIN_2, INPUT);
+  pinMode(POT_PIN_1, INPUT);
+  pinMode(POT_PIN_2, INPUT);
+  pinMode(POT_PIN_3, INPUT);
   analogReadResolution(12);
   
   // Setup button pins with internal pullup resistors
@@ -48,12 +62,12 @@ void setup() {
   display.clearBuffer();
   display.setFont(u8g2_font_ncenB08_tr);
   display.drawStr(0, 10, "Drum Brain Test");
-  display.drawStr(0, 25, "2 Drums");
+  display.drawStr(0, 25, "2 Drums + 3 Pots");
   display.drawStr(0, 40, "5 Buttons");
   display.drawStr(0, 55, "Ready!");
   display.sendBuffer();
   
-  Serial.println("Drum trigger test - 2 drums + 5 buttons + OLED");
+  Serial.println("Drum trigger test - 2 drums + 5 buttons + 3 pots + OLED");
   Serial.println("Hit the drums or press buttons...");
   
   delay(2000); // Show startup message for 2 seconds
@@ -65,6 +79,22 @@ void loop() {
   // Read both drums
   int value1 = analogRead(DRUM_PIN_1);
   int value2 = analogRead(DRUM_PIN_2);
+  
+  // Read pots periodically
+  if (currentTime - lastPotRead >= POT_READ_INTERVAL) {
+    pot1Value = analogRead(POT_PIN_1);
+    pot2Value = analogRead(POT_PIN_2);
+    pot3Value = analogRead(POT_PIN_3);
+    lastPotRead = currentTime;
+    
+    // Print pot values to serial
+    Serial.print("Pot1: ");
+    Serial.print(pot1Value);
+    Serial.print(" | Pot2: ");
+    Serial.print(pot2Value);
+    Serial.print(" | Pot3: ");
+    Serial.println(pot3Value);
+  }
   
   // Process drum 1
   if (currentTime - lastHitTime1 >= MASK_TIME) {
