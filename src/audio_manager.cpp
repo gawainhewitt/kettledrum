@@ -1,5 +1,6 @@
 #include "audio_manager.h"
 #include "config.h"
+#include "simpletimp_samples.h"
 
 AudioManager::AudioManager() 
   : patchCord1(nullptr), patchCord2(nullptr), 
@@ -13,8 +14,8 @@ void AudioManager::begin() {
   sgtl5000_1.volume(0.5);
   
   // Create audio connections
-  patchCord1 = new AudioConnection(sine1, 0, mixer1, 0);
-  patchCord2 = new AudioConnection(sine2, 0, mixer1, 1);
+  patchCord1 = new AudioConnection(wavetable1, 0, mixer1, 0);
+  patchCord2 = new AudioConnection(wavetable2, 0, mixer1, 1);
   patchCord3 = new AudioConnection(mixer1, 0, i2s1, 0); // Left
   patchCord4 = new AudioConnection(mixer1, 0, i2s1, 1); // Right
   
@@ -24,25 +25,27 @@ void AudioManager::begin() {
   mixer1.gain(2, 0);
   mixer1.gain(3, 0);
   
-  // Setup initial frequencies
-  sine1.frequency(440); // Drum 1 sound - 440Hz
-  sine1.amplitude(0);
-  sine2.frequency(550); // Drum 2 sound - 550Hz
-  sine2.amplitude(0);
+  // Load timpani instrument into both wavetables
+  wavetable1.setInstrument(simpletimp);
+  wavetable2.setInstrument(simpletimp);
+  
+  // Set initial amplitude
+  wavetable1.amplitude(1.0);
+  wavetable2.amplitude(1.0);
 }
 
 void AudioManager::playDrum(int drumNum, int peakValue) {
-  // Map peak value to amplitude (0.0 to 1.0)
-  float amplitude = map(peakValue, TRIGGER_VALUE, 4095, 100, 1000) / 1000.0;
-  amplitude = constrain(amplitude, 0.1, 1.0);
+  // Map peak value to MIDI velocity (0-127)
+  int velocity = map(peakValue, TRIGGER_VALUE, 4095, 40, 127);
+  velocity = constrain(velocity, 40, 127);
+  
+  // MIDI note 67 = G3 (the note this sample was recorded at)
+  // You could assign different notes to each drum if desired
+  int midiNote = 67;
   
   if (drumNum == 1) {
-    sine1.amplitude(amplitude);
-    delay(50); // Sound duration
-    sine1.amplitude(0);
+    wavetable1.playNote(midiNote, velocity);
   } else {
-    sine2.amplitude(amplitude);
-    delay(50); // Sound duration
-    sine2.amplitude(0);
+    wavetable2.playNote(midiNote, velocity);
   }
 }

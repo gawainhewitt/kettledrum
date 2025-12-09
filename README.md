@@ -1,7 +1,7 @@
 # Drum Brain Project - Modular Structure
 
 ## Overview
-This is a reorganized version of the drum brain code, split into modular components for better organization and maintainability.
+This is a reorganized version of the kettle drum brain code, split into modular components for better organization and maintainability.
 
 ## Project Structure
 

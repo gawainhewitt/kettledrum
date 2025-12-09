@@ -10,8 +10,8 @@ public:
   void playDrum(int drumNum, int peakValue);
 
 private:
-  AudioSynthWaveformSine sine1;
-  AudioSynthWaveformSine sine2;
+  AudioSynthWavetable wavetable1;
+  AudioSynthWavetable wavetable2;
   AudioMixer4 mixer1;
   AudioOutputI2S i2s1;
   AudioConnection* patchCord1;
