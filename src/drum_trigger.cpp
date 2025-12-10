@@ -3,7 +3,8 @@
 
 DrumTrigger::DrumTrigger(int pin, int drumNumber) 
   : drumPin(pin), drumNum(drumNumber), lastHitTime(0), 
-    scanning(false), scanStartTime(0), peakValue(0), triggered(false) {
+    scanning(false), scanStartTime(0), peakValue(0), triggered(false),
+    triggerValue(TRIGGER_VALUE) {
 }
 
 void DrumTrigger::begin() {
@@ -33,7 +34,7 @@ void DrumTrigger::update() {
         Serial.print(" HIT! Peak: ");
         Serial.println(peakValue);
         
-        if (peakValue >= TRIGGER_VALUE) {
+        if (peakValue >= triggerValue) {
           triggered = true;
         }
         
@@ -42,4 +43,8 @@ void DrumTrigger::update() {
       }
     }
   }
+}
+
+void DrumTrigger::setTriggerValue(int value) {
+  triggerValue = constrain(value, 10, 1000);
 }

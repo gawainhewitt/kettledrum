@@ -11,11 +11,13 @@ public:
   int getPeakValue() const { return peakValue; }
   bool wasTriggered() const { return triggered; }
   void clearTriggered() { triggered = false; }
+  void setTriggerValue(int value);
   int getDrumNumber() const { return drumNum; }
 
 private:
   int drumPin;
   int drumNum;
+  int triggerValue;
   unsigned long lastHitTime;
   bool scanning;
   unsigned long scanStartTime;

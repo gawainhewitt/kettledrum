@@ -12,6 +12,8 @@ AudioManager audio;
 DisplayManager display;
 InputControls inputs;
 int lastPot3ForVolume = -1;
+int lastPot1ForSensitivity = -1;
+int lastPot2ForSensitivity = -1;
 
 void setup() {
   Serial.begin(115200);
@@ -63,6 +65,30 @@ void loop() {
     
     Serial.print("Volume: ");
     Serial.println(volume);
+  }
+
+  // Handle pot 1 sensitivity for drum 1 (clockwise = more sensitive)
+  int currentPot1 = inputs.getPot1Value();
+  if (abs(currentPot1 - lastPot1ForSensitivity) > 20) {
+    // Reverse map: pot at 0 = trigger 500, pot at 4095 = trigger 50
+    int triggerValue = map(currentPot1, 0, 4095, 50, 500);
+    drum1.setTriggerValue(triggerValue);
+    lastPot1ForSensitivity = currentPot1;
+    
+    Serial.print("Drum 1 Trigger: ");
+    Serial.println(triggerValue);
+  }
+  
+  // Handle pot 2 sensitivity for drum 2 (clockwise = more sensitive)
+  int currentPot2 = inputs.getPot2Value();
+  if (abs(currentPot2 - lastPot2ForSensitivity) > 20) {
+    // Reverse map: pot at 0 = trigger 500, pot at 4095 = trigger 50
+    int triggerValue = map(currentPot2, 0, 4095, 50, 500);
+    drum2.setTriggerValue(triggerValue);
+    lastPot2ForSensitivity = currentPot2;
+    
+    Serial.print("Drum 2 Trigger: ");
+    Serial.println(triggerValue);
   }
   
   // Handle button presses
