@@ -12,8 +12,8 @@ const int SCAN_TIME = 5;
 const int MASK_TIME = 50;
 
 // Potentiometer pins
-const int POT_PIN_1 = A10;
-const int POT_PIN_2 = A11;
+const int POT_PIN_1 = A11;
+const int POT_PIN_2 = A13;
 const int POT_PIN_3 = A12;
 const int POT_READ_INTERVAL = 100;
 const int POT_CHANGE_THRESHOLD = 15;

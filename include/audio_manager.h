@@ -8,6 +8,7 @@ public:
   AudioManager();
   void begin();
   void playDrum(int drumNum, int peakValue);
+  void setVolume(float volume);
 
 private:
   AudioSynthWavetable wavetable1;

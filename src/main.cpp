@@ -11,6 +11,7 @@ DrumTrigger drum2(DRUM_PIN_2, 2);
 AudioManager audio;
 DisplayManager display;
 InputControls inputs;
+int lastPot3ForVolume = -1;
 
 void setup() {
   Serial.begin(115200);
@@ -50,6 +51,18 @@ void loop() {
     audio.playDrum(2, drum2.getPeakValue());
     display.showDrumHit(2, drum2.getPeakValue());
     drum2.clearTriggered();
+  }
+
+  // Handle pot 3 volume control (reverse mapped)
+  int currentPot3 = inputs.getPot3Value();
+  if (abs(currentPot3 - lastPot3ForVolume) > 20) {  // 20 = noise threshold
+    // Reverse map: pot at 0 = volume 1.0, pot at 4095 = volume 0.1
+    float volume = map(currentPot3, 0, 4095, 0, 100) / 100.0;
+    audio.setVolume(volume);
+    lastPot3ForVolume = currentPot3;
+    
+    Serial.print("Volume: ");
+    Serial.println(volume);
   }
   
   // Handle button presses

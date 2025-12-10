@@ -44,8 +44,22 @@ void AudioManager::playDrum(int drumNum, int peakValue) {
   int midiNote = 67;
   
   if (drumNum == 1) {
-    wavetable1.playNote(midiNote, velocity);
+    wavetable1.playNote(67, velocity);
   } else {
-    wavetable2.playNote(midiNote, velocity);
+    wavetable2.playNote(60, velocity);
+  }
+}
+
+void AudioManager::setVolume(float volume) {
+  volume = constrain(volume, 0.0, 1.0);
+  
+  if (volume < 0.01) {
+    // Mute by setting mixer gains to 0
+    mixer1.gain(0, 0);
+    mixer1.gain(1, 0);
+  } else {
+    // Apply volume via mixer gains
+    mixer1.gain(0, volume * 0.7);
+    mixer1.gain(1, volume * 0.7);
   }
 }
