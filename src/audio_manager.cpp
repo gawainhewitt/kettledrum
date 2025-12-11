@@ -4,7 +4,8 @@
 
 AudioManager::AudioManager() 
   : patchCord1(nullptr), patchCord2(nullptr), 
-    patchCord3(nullptr), patchCord4(nullptr) {
+    patchCord3(nullptr), patchCord4(nullptr),
+    drum1Note(67), drum2Note(60) {
 }
 
 void AudioManager::begin() {
@@ -39,14 +40,10 @@ void AudioManager::playDrum(int drumNum, int peakValue) {
   int velocity = map(peakValue, TRIGGER_VALUE, 4095, 40, 127);
   velocity = constrain(velocity, 40, 127);
   
-  // MIDI note 67 = G3 (the note this sample was recorded at)
-  // You could assign different notes to each drum if desired
-  int midiNote = 67;
-  
   if (drumNum == 1) {
-    wavetable1.playNote(67, velocity);
+    wavetable1.playNote(drum1Note, velocity);
   } else {
-    wavetable2.playNote(60, velocity);
+    wavetable2.playNote(drum2Note, velocity);
   }
 }
 
@@ -61,5 +58,16 @@ void AudioManager::setVolume(float volume) {
     // Apply volume via mixer gains
     mixer1.gain(0, volume * 0.7);
     mixer1.gain(1, volume * 0.7);
+  }
+}
+
+void AudioManager::playDrumNote(int drumNum, int midiNote, int peakValue) {
+  int velocity = map(peakValue, TRIGGER_VALUE, 4095, 40, 127);
+  velocity = constrain(velocity, 40, 127);
+  
+  if (drumNum == 1) {
+    wavetable1.playNote(midiNote, velocity);
+  } else {
+    wavetable2.playNote(midiNote, velocity);
   }
 }
