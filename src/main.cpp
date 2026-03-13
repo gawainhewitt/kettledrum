@@ -18,11 +18,7 @@ EEPROMManager eepromManager;
 
 // Pot state tracking with initialization flags
 int lastPot3ForVolume = -1;
-int lastPot1ForSensitivity = -1;
-int lastPot2ForSensitivity = -1;
 bool pot3Initialized = false;  // NEW
-bool pot1Initialized = false;  // NEW
-bool pot2Initialized = false;  // NEW
 
 // Hit timing for visual feedback
 unsigned long drum1HitTime = 0;
@@ -33,7 +29,6 @@ unsigned long lastDisplayUpdate = 0;
 enum DisplayState {
   STATE_IDLE,
   STATE_VOLUME_OVERLAY,
-  STATE_SENSITIVITY_OVERLAY,
   STATE_MENU
 };
 
@@ -45,7 +40,7 @@ void updateDisplay() {
   unsigned long currentTime = millis();
   
   // Check for overlay timeout
-  if ((displayState == STATE_VOLUME_OVERLAY || displayState == STATE_SENSITIVITY_OVERLAY) &&
+  if ((displayState == STATE_VOLUME_OVERLAY) &&
       (currentTime - overlayStartTime > OVERLAY_TIMEOUT_MS)) {
     displayState = STATE_IDLE;
   }
@@ -62,10 +57,6 @@ void updateDisplay() {
       
     case STATE_VOLUME_OVERLAY:
       // Volume overlay doesn't show dots currently - could be enhanced
-      break;
-      
-    case STATE_SENSITIVITY_OVERLAY:
-      // Sensitivity overlay doesn't show dots currently - could be enhanced
       break;
       
     case STATE_MENU:
@@ -126,8 +117,6 @@ void setup() {
   
   // Initialize pot tracking values
   lastPot3ForVolume = inputs.getPot3Value();
-  lastPot1ForSensitivity = inputs.getPot1Value();
-  lastPot2ForSensitivity = inputs.getPot2Value();
   
   // Switch to idle screen after splash
   displayState = STATE_IDLE;
@@ -203,56 +192,6 @@ void loop() {
     
     lastPot3ForVolume = currentPot3;
     pot3Initialized = true;
-  }
-
-  // Handle pot 1 sensitivity for drum 1 with noise filtering
-  int currentPot1 = inputs.getPot1Value();
-  int pot1Change = abs(currentPot1 - lastPot1ForSensitivity);
-  
-  if (pot1Change > 50) {  // Increased threshold
-    if (pot1Initialized) {
-      int triggerValue = map(currentPot1, 0, 4095, 50, 500);
-      drum1.setTriggerValue(triggerValue);
-      
-      // Show sensitivity overlay if not in menu
-      if (displayState != STATE_MENU) {
-        displayState = STATE_SENSITIVITY_OVERLAY;
-        overlayStartTime = currentTime;
-        overlayDrumIndex = 0;
-        display.showSensitivityOverlay(0, triggerValue);
-      }
-      
-      Serial.print("Drum 1 Trigger: ");
-      Serial.println(triggerValue);
-    }
-    
-    lastPot1ForSensitivity = currentPot1;
-    pot1Initialized = true;
-  }
-  
-  // Handle pot 2 sensitivity for drum 2 with noise filtering
-  int currentPot2 = inputs.getPot2Value();
-  int pot2Change = abs(currentPot2 - lastPot2ForSensitivity);
-  
-  if (pot2Change > 50) {  // Increased threshold
-    if (pot2Initialized) {
-      int triggerValue = map(currentPot2, 0, 4095, 50, 500);
-      drum2.setTriggerValue(triggerValue);
-      
-      // Show sensitivity overlay if not in menu
-      if (displayState != STATE_MENU) {
-        displayState = STATE_SENSITIVITY_OVERLAY;
-        overlayStartTime = currentTime;
-        overlayDrumIndex = 1;
-        display.showSensitivityOverlay(1, triggerValue);
-      }
-      
-      Serial.print("Drum 2 Trigger: ");
-      Serial.println(triggerValue);
-    }
-    
-    lastPot2ForSensitivity = currentPot2;
-    pot2Initialized = true;
   }
   
   // Handle delayed EEPROM writes

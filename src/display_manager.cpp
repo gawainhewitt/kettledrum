@@ -82,16 +82,6 @@ void DisplayManager::showVolumeOverlay(int volume) {
     display.sendBuffer();
 }
 
-void DisplayManager::showSensitivityOverlay(int drumIndex, int sensitivity) {
-    display.clearBuffer();
-    display.setFont(u8g2_font_ncenB10_tr);
-    String label = "Drum " + String(drumIndex + 1) + " Sens:";
-    display.drawStr(10, 25, label.c_str());
-    display.setCursor(10, 45);
-    display.print(sensitivity);
-    display.sendBuffer();
-}
-
 void DisplayManager::showMenu(int selectedDrum, uint8_t drum1Note, uint8_t drum2Note, bool drum1Hit, bool drum2Hit) {
     display.clearBuffer();
     display.setFont(u8g2_font_ncenB10_tr);

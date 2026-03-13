@@ -2,9 +2,8 @@
 #include "config.h"
 
 InputControls::InputControls() 
-  : pot1Value(0), pot2Value(0), pot3Value(0),
-    lastPot1Value(0), lastPot2Value(0), lastPot3Value(0),
-    lastPotRead(0), buttonPressed(-1) {
+  : pot3Value(0), lastPot3Value(0), 
+  lastPotRead(0), buttonPressed(-1) {
   
   for (int i = 0; i < NUM_BUTTONS; i++) {
     lastButtonState[i] = HIGH;
@@ -13,8 +12,6 @@ InputControls::InputControls()
 
 void InputControls::begin() {
   // Setup pot pins
-  pinMode(POT_PIN_1, INPUT);
-  pinMode(POT_PIN_2, INPUT);
   pinMode(POT_PIN_3, INPUT);
   
   // Setup button pins
@@ -23,11 +20,7 @@ void InputControls::begin() {
   }
   
   // Read initial pot values
-  pot1Value = analogRead(POT_PIN_1);
-  pot2Value = analogRead(POT_PIN_2);
   pot3Value = analogRead(POT_PIN_3);
-  lastPot1Value = pot1Value;
-  lastPot2Value = pot2Value;
   lastPot3Value = pot3Value;
 }
 
@@ -36,25 +29,15 @@ void InputControls::update() {
   
   // Read pots periodically and check for changes
   if (currentTime - lastPotRead >= POT_READ_INTERVAL) {
-    pot1Value = analogRead(POT_PIN_1);
-    pot2Value = analogRead(POT_PIN_2);
     pot3Value = analogRead(POT_PIN_3);
     lastPotRead = currentTime;
     
     // Only print if any pot changed significantly
-    if (abs(pot1Value - lastPot1Value) > POT_CHANGE_THRESHOLD ||
-        abs(pot2Value - lastPot2Value) > POT_CHANGE_THRESHOLD ||
-        abs(pot3Value - lastPot3Value) > POT_CHANGE_THRESHOLD) {
+    if (abs(pot3Value - lastPot3Value) > POT_CHANGE_THRESHOLD) {
       
-      Serial.print("Pot1: ");
-      Serial.print(pot1Value);
-      Serial.print(" | Pot2: ");
-      Serial.print(pot2Value);
       Serial.print(" | Pot3: ");
       Serial.println(pot3Value);
       
-      lastPot1Value = pot1Value;
-      lastPot2Value = pot2Value;
       lastPot3Value = pot3Value;
     }
   }

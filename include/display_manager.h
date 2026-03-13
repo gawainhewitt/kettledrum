@@ -6,7 +6,6 @@
 enum DisplayMode {
     DISPLAY_IDLE,
     DISPLAY_VOLUME_OVERLAY,
-    DISPLAY_SENSITIVITY_OVERLAY,
     DISPLAY_MENU
 };
 
@@ -21,7 +20,6 @@ public:
   void setDisplayMode(DisplayMode mode);
   void showIdleScreen(bool drum1Hit, bool drum2Hit);  
   void showVolumeOverlay(int volume);
-  void showSensitivityOverlay(int drumIndex, int sensitivity);
   void showMenu(int selectedDrum, uint8_t drum1Note, uint8_t drum2Note, bool drum1Hit, bool drum2Hit);  
   void showHitDot(int drumIndex, bool state);
   void update();  // Call every loop to handle animations/timeouts
