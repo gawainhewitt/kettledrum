@@ -6,7 +6,7 @@ const int DRUM_PIN_1 = A0;
 const int DRUM_PIN_2 = A1;
 
 // Trigger parameters
-const int THRESHOLD = 50;
+const int THRESHOLD = 100;
 const int TRIGGER_VALUE = 100;
 const int SCAN_TIME = 5;
 const int MASK_TIME = 50;
